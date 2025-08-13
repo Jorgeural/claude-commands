@@ -1,0 +1,466 @@
+#!/bin/bash
+
+# Claude Commands Uninstallation Script
+# This script removes commands from ~/.claude/commands
+# Usage: ./uninstall-commands.sh [command-name] or interactive mode
+
+set -e  # Exit on any error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Configuration
+CLAUDE_COMMANDS_DIR="$HOME/.claude/commands"
+REPO_COMMANDS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/commands"
+BACKUP_DIR="$CLAUDE_COMMANDS_DIR/.uninstall-backup-$(date +%Y%m%d-%H%M%S)"
+SINGLE_COMMAND="$1"
+
+# Function to print colored messages
+print_message() {
+    local color=$1
+    local message=$2
+    echo -e "${color}${message}${NC}"
+}
+
+print_success() {
+    print_message "$GREEN" "✅ $1"
+}
+
+print_warning() {
+    print_message "$YELLOW" "⚠️  $1"
+}
+
+print_error() {
+    print_message "$RED" "❌ $1"
+}
+
+print_info() {
+    print_message "$BLUE" "ℹ️  $1"
+}
+
+# Function to create backup before uninstallation
+create_backup() {
+    if [ -d "$CLAUDE_COMMANDS_DIR" ] && [ "$(ls -A "$CLAUDE_COMMANDS_DIR" 2>/dev/null)" ]; then
+        print_info "Creating backup before uninstallation..."
+        mkdir -p "$BACKUP_DIR"
+        cp -r "$CLAUDE_COMMANDS_DIR"/* "$BACKUP_DIR/" 2>/dev/null || true
+        print_success "Backup created at: $BACKUP_DIR"
+        return 0
+    fi
+    return 1
+}
+
+# Function to list installed commands (from this repository)
+list_installed_commands() {
+    local installed_commands=()
+    
+    if [ ! -d "$CLAUDE_COMMANDS_DIR" ]; then
+        return 0
+    fi
+    
+    # Check which of our repository commands are currently installed
+    for cmd_file in "$REPO_COMMANDS_DIR"/*.md; do
+        if [ -f "$cmd_file" ]; then
+            local cmd_name=$(basename "$cmd_file" .md)
+            local installed_file="$CLAUDE_COMMANDS_DIR/${cmd_name}.md"
+            if [ -f "$installed_file" ]; then
+                installed_commands+=("$cmd_name")
+            fi
+        fi
+    done
+    
+    echo "${installed_commands[@]}"
+}
+
+# Function to list all commands in Claude commands directory
+list_all_claude_commands() {
+    local all_commands=()
+    
+    if [ ! -d "$CLAUDE_COMMANDS_DIR" ]; then
+        return 0
+    fi
+    
+    for cmd_file in "$CLAUDE_COMMANDS_DIR"/*.md; do
+        if [ -f "$cmd_file" ]; then
+            local cmd_name=$(basename "$cmd_file" .md)
+            all_commands+=("$cmd_name")
+        fi
+    done
+    
+    echo "${all_commands[@]}"
+}
+
+# Function to show command uninstallation menu
+show_uninstall_selection() {
+    local repo_commands=($(list_installed_commands))
+    local all_commands=($(list_all_claude_commands))
+    local repo_count=${#repo_commands[@]}
+    local all_count=${#all_commands[@]}
+    
+    if [ $repo_count -eq 0 ] && [ $all_count -eq 0 ]; then
+        print_warning "No Claude commands found in $CLAUDE_COMMANDS_DIR"
+        return 1
+    fi
+    
+    print_info "Claude Commands Uninstallation Options:"
+    echo
+    
+    if [ $repo_count -gt 0 ]; then
+        echo "Repository Commands (from claude-commands):"
+        echo "0) Remove ALL repository commands ($repo_count total)"
+        
+        for i in "${!repo_commands[@]}"; do
+            local num=$((i + 1))
+            local cmd_name="${repo_commands[$i]}"
+            
+            # Try to extract description from the repository command file
+            local description=""
+            local cmd_file="$REPO_COMMANDS_DIR/${cmd_name}.md"
+            if [ -f "$cmd_file" ]; then
+                description=$(grep "^description:" "$cmd_file" 2>/dev/null | sed 's/description: *//' | head -1)
+            fi
+            
+            if [ -n "$description" ]; then
+                echo "$num) /$cmd_name - $description"
+            else
+                echo "$num) /$cmd_name"
+            fi
+        done
+        echo
+    fi
+    
+    if [ $all_count -gt $repo_count ]; then
+        local other_count=$((all_count - repo_count))
+        echo "Other Commands (not from this repository):"
+        echo "$((repo_count + 1))) Remove ALL other commands ($other_count total)"
+        echo "$((repo_count + 2))) Remove ALL Claude commands ($all_count total)"
+        echo "$((repo_count + 3))) Show individual selection for all commands"
+        echo
+    fi
+    
+    local max_option=$((repo_count + 3))
+    if [ $repo_count -eq 0 ]; then
+        max_option=3
+        echo "1) Remove ALL commands ($all_count total)"
+        echo "2) Show individual selection"
+        echo
+    fi
+    
+    while true; do
+        read -p "Select option (0-$max_option): " selection
+        
+        if [[ "$selection" =~ ^[0-9]+$ ]] && [ "$selection" -ge 0 ] && [ "$selection" -le "$max_option" ]; then
+            if [ "$selection" -eq 0 ]; then
+                echo "repo-all"
+                return 0
+            elif [ "$selection" -le "$repo_count" ]; then
+                local selected_index=$((selection - 1))
+                echo "${repo_commands[$selected_index]}"
+                return 0
+            else
+                case "$selection" in
+                    $((repo_count + 1))) echo "other-all"; return 0 ;;
+                    $((repo_count + 2))) echo "all-all"; return 0 ;;
+                    $((repo_count + 3))) echo "individual"; return 0 ;;
+                    1) if [ $repo_count -eq 0 ]; then echo "all-all"; return 0; fi ;;
+                    2) if [ $repo_count -eq 0 ]; then echo "individual"; return 0; fi ;;
+                esac
+            fi
+        else
+            print_warning "Invalid selection. Please choose a number between 0 and $max_option."
+        fi
+    done
+}
+
+# Function to show individual command selection
+show_individual_selection() {
+    local all_commands=($(list_all_claude_commands))
+    local count=${#all_commands[@]}
+    
+    if [ $count -eq 0 ]; then
+        print_warning "No Claude commands found to uninstall"
+        return 1
+    fi
+    
+    print_info "Select individual commands to uninstall (multiple selections allowed):"
+    echo
+    
+    for i in "${!all_commands[@]}"; do
+        local num=$((i + 1))
+        local cmd_name="${all_commands[$i]}"
+        echo "$num) /$cmd_name"
+    done
+    echo
+    echo "Enter command numbers separated by spaces (e.g., '1 3 5'), or 'all' for all commands:"
+    
+    while true; do
+        read -p "Selection: " selection
+        
+        if [ "$selection" = "all" ]; then
+            echo "${all_commands[@]}"
+            return 0
+        fi
+        
+        # Parse space-separated numbers
+        local selected_commands=()
+        local valid=true
+        
+        for num in $selection; do
+            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le "$count" ]; then
+                local selected_index=$((num - 1))
+                selected_commands+=("${all_commands[$selected_index]}")
+            else
+                print_warning "Invalid selection: $num (must be 1-$count)"
+                valid=false
+                break
+            fi
+        done
+        
+        if $valid && [ ${#selected_commands[@]} -gt 0 ]; then
+            echo "${selected_commands[@]}"
+            return 0
+        fi
+    done
+}
+
+# Function to validate single command
+validate_command_exists() {
+    local cmd_name=$1
+    local cmd_file="$CLAUDE_COMMANDS_DIR/${cmd_name}.md"
+    
+    if [ ! -f "$cmd_file" ]; then
+        print_error "Command '$cmd_name' is not installed!"
+        print_info "Installed commands:"
+        local installed=($(list_all_claude_commands))
+        if [ ${#installed[@]} -eq 0 ]; then
+            echo "  (none found)"
+        else
+            for cmd in "${installed[@]}"; do
+                echo "  - $cmd"
+            done
+        fi
+        return 1
+    fi
+    return 0
+}
+
+# Function to ask user for confirmation
+ask_confirmation() {
+    local message=$1
+    local default=${2:-n}
+    
+    if [ "$default" = "y" ]; then
+        prompt="[Y/n]"
+    else
+        prompt="[y/N]"
+    fi
+    
+    read -p "$(echo -e "${YELLOW}$message $prompt ${NC}")" -n 1 -r
+    echo
+    
+    if [ "$default" = "y" ]; then
+        [[ $REPLY =~ ^[Nn]$ ]] && return 1 || return 0
+    else
+        [[ $REPLY =~ ^[Yy]$ ]] && return 0 || return 1
+    fi
+}
+
+# Function to remove a single command
+remove_command() {
+    local cmd_name=$1
+    local cmd_file="$CLAUDE_COMMANDS_DIR/${cmd_name}.md"
+    
+    if [ -f "$cmd_file" ]; then
+        rm "$cmd_file"
+        print_success "Removed: /$cmd_name"
+        return 0
+    else
+        print_warning "Command /$cmd_name was not found"
+        return 1
+    fi
+}
+
+# Function to remove multiple commands
+remove_commands() {
+    local commands=("$@")
+    local removed_count=0
+    local failed_count=0
+    
+    for cmd_name in "${commands[@]}"; do
+        if remove_command "$cmd_name"; then
+            ((removed_count++))
+        else
+            ((failed_count++))
+        fi
+    done
+    
+    echo
+    print_info "Removal summary:"
+    if [ $removed_count -gt 0 ]; then
+        print_success "Successfully removed: $removed_count commands"
+    fi
+    if [ $failed_count -gt 0 ]; then
+        print_warning "Failed to remove: $failed_count commands"
+    fi
+}
+
+# Main uninstallation function
+main() {
+    print_info "Claude Commands Uninstallation Script"
+    print_info "======================================"
+    echo
+    
+    # Check if Claude commands directory exists
+    if [ ! -d "$CLAUDE_COMMANDS_DIR" ]; then
+        print_warning "Claude commands directory not found: $CLAUDE_COMMANDS_DIR"
+        print_info "No commands to uninstall."
+        exit 0
+    fi
+    
+    # Check if there are any commands installed
+    local all_installed=($(list_all_claude_commands))
+    if [ ${#all_installed[@]} -eq 0 ]; then
+        print_warning "No Claude commands found in: $CLAUDE_COMMANDS_DIR"
+        print_info "Nothing to uninstall."
+        exit 0
+    fi
+    
+    # Determine uninstallation mode
+    local uninstall_mode=""
+    local commands_to_remove=()
+    
+    if [ -n "$SINGLE_COMMAND" ]; then
+        # Command specified as argument
+        if validate_command_exists "$SINGLE_COMMAND"; then
+            uninstall_mode="single"
+            commands_to_remove=("$SINGLE_COMMAND")
+            print_info "Uninstalling single command: /$SINGLE_COMMAND"
+        else
+            exit 1
+        fi
+    else
+        # Interactive selection
+        print_info "Uninstallation Mode Selection"
+        echo
+        
+        local selection=$(show_uninstall_selection)
+        
+        case "$selection" in
+            "repo-all")
+                uninstall_mode="repo-all"
+                commands_to_remove=($(list_installed_commands))
+                ;;
+            "other-all")
+                uninstall_mode="other-all"
+                local repo_commands=($(list_installed_commands))
+                local all_commands=($(list_all_claude_commands))
+                # Get commands that are not from repository
+                for cmd in "${all_commands[@]}"; do
+                    local is_repo_cmd=false
+                    for repo_cmd in "${repo_commands[@]}"; do
+                        if [ "$cmd" = "$repo_cmd" ]; then
+                            is_repo_cmd=true
+                            break
+                        fi
+                    done
+                    if ! $is_repo_cmd; then
+                        commands_to_remove+=("$cmd")
+                    fi
+                done
+                ;;
+            "all-all")
+                uninstall_mode="all"
+                commands_to_remove=($(list_all_claude_commands))
+                ;;
+            "individual")
+                uninstall_mode="individual"
+                local selected=$(show_individual_selection)
+                if [ $? -eq 0 ]; then
+                    commands_to_remove=($selected)
+                else
+                    exit 1
+                fi
+                ;;
+            *)
+                # Single command selected
+                uninstall_mode="single"
+                commands_to_remove=("$selection")
+                ;;
+        esac
+    fi
+    
+    echo
+    
+    # Display what will be removed
+    if [ ${#commands_to_remove[@]} -eq 0 ]; then
+        print_warning "No commands selected for removal."
+        exit 0
+    fi
+    
+    print_info "Commands to be removed (${#commands_to_remove[@]} total):"
+    for cmd in "${commands_to_remove[@]}"; do
+        echo "  - /$cmd"
+    done
+    echo
+    
+    # Ask for confirmation
+    local confirmation_msg="Are you sure you want to remove these commands?"
+    if [ ${#commands_to_remove[@]} -eq 1 ]; then
+        confirmation_msg="Are you sure you want to remove /${commands_to_remove[0]}?"
+    fi
+    
+    if ! ask_confirmation "$confirmation_msg"; then
+        print_info "Uninstallation cancelled by user"
+        exit 0
+    fi
+    echo
+    
+    # Create backup
+    if create_backup; then
+        echo
+    fi
+    
+    # Remove commands
+    print_info "Removing commands..."
+    remove_commands "${commands_to_remove[@]}"
+    
+    echo
+    print_success "Uninstallation completed!"
+    
+    if [ -d "$BACKUP_DIR" ]; then
+        print_info "Backup available at: $BACKUP_DIR"
+        print_info "To restore: cp \"$BACKUP_DIR\"/* \"$CLAUDE_COMMANDS_DIR/\""
+    fi
+    
+    echo
+    print_info "Script usage options:"
+    echo "  ./uninstall-commands.sh                  # Interactive selection"
+    echo "  ./uninstall-commands.sh sprint-setup     # Remove single command"
+    echo "  ./uninstall-commands.sh velocity-report  # Remove single command"
+    echo
+    
+    # Check if any commands remain
+    local remaining=($(list_all_claude_commands))
+    if [ ${#remaining[@]} -eq 0 ]; then
+        print_info "All Claude commands have been removed."
+        print_info "Directory $CLAUDE_COMMANDS_DIR is now empty."
+    else
+        print_info "Remaining commands (${#remaining[@]}):"
+        for cmd in "${remaining[@]}"; do
+            echo "  - /$cmd"
+        done
+    fi
+    
+    echo
+    print_success "Uninstallation complete! 🧹"
+}
+
+# Error handling
+trap 'print_error "An error occurred during uninstallation. Check the output above for details."' ERR
+
+# Run main function
+main "$@"

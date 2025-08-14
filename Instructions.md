@@ -32,9 +32,11 @@ After Ideas.md is reviewed, create actual Claude slash command template files (.
 
 **Output**: 8-10 working command template files in `/commands/` directory
 
-## Step 3: Installation Script
+## Step 3: Installation and Uninstallation Scripts
 
-Create `scripts/install-commands.sh` script with these features:
+Create `scripts/install-commands.sh` and `scripts/uninstall-commands.sh` scripts with these features:
+
+**Installation Script**:
 
 - **Target Directory**: ~/.claude/commands
 - **Safety Features**: 
@@ -45,7 +47,13 @@ Create `scripts/install-commands.sh` script with these features:
 - **Error Handling**: Robust error checking and user guidance
 - **User Experience**: Clear progress indicators and success/failure messages
 
-**Output**: Executable installation script with comprehensive conflict handling
+**Uninstallation Script**:
+- **Safety-first**: Only remove commands from this repository (protect other custom commands)
+- **Interactive Menu**: Show available repository commands with descriptions
+- **Backup Protection**: Automatic backup before removal
+- **Clear Identification**: Distinguish repository commands from others
+
+**Output**: Executable installation and uninstallation scripts with comprehensive safety features
 
 ## Step 4: Documentation
 
@@ -73,7 +81,7 @@ Provide a comprehensive summary including:
 
 - ✅ Ideas.md with 34 command ideas across 9 categories
 - ✅ 9 working command templates (one from each category)
-- ✅ Robust installation script with conflict handling
+- ✅ Robust installation and uninstallation scripts with safety features
 - ✅ Comprehensive README.md with full documentation
 - ✅ Repository summary and purpose statement
 

@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 CLAUDE_COMMANDS_DIR="$HOME/.claude/commands"
-REPO_COMMANDS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/commands"
+REPO_COMMANDS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/commands"
 BACKUP_DIR="$CLAUDE_COMMANDS_DIR/.backup-$(date +%Y%m%d-%H%M%S)"
 SINGLE_COMMAND="$1"
 
@@ -231,7 +231,7 @@ main() {
     # Check if repository commands directory exists
     if [ ! -d "$REPO_COMMANDS_DIR" ]; then
         print_error "Commands directory not found: $REPO_COMMANDS_DIR"
-        print_error "Please run this script from the claude-commands repository root."
+        print_error "Commands directory not found. Please run this script from the claude-commands repository."
         exit 1
     fi
     

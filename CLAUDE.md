@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Claude Commands repository that provides custom slash commands for software engineers. The repository contains:
 
 - **Custom slash command definitions**: Located in `commands/` directory as markdown files
-- **Installation/uninstallation scripts**: `install-commands.sh` and `uninstall-commands.sh`
+- **Installation/uninstallation scripts**: `scripts/install-commands.sh` and `scripts/uninstall-commands.sh`
 - **Command ideas and documentation**: `Ideas.md` and comprehensive `README.md`
 
 ## Project Structure
@@ -17,8 +17,9 @@ claude-commands/
 ├── README.md                 # Complete documentation and usage guide
 ├── Ideas.md                  # 34+ command ideas organized by category
 ├── Instructions.md           # Development instructions for command creation
-├── install-commands.sh       # Interactive installation script
-├── uninstall-commands.sh     # Interactive uninstallation script
+├── scripts/                  # Installation and management scripts
+│   ├── install-commands.sh   # Interactive installation script
+│   └── uninstall-commands.sh # Interactive uninstallation script
 ├── commands/                 # Command definitions (10 working commands)
 │   ├── sprint-setup.md       # Sprint initialization with Jira integration
 │   ├── error-analysis.md     # Error pattern analysis using Sentry
@@ -65,23 +66,23 @@ Commands leverage these MCP tools:
 ### Installation and Management
 ```bash
 # Install all commands interactively
-./install-commands.sh
+./scripts/install-commands.sh
 
 # Install specific command
-./install-commands.sh sprint-setup
+./scripts/install-commands.sh sprint-setup
 
-# Uninstall commands (interactive)
-./uninstall-commands.sh
+# Uninstall commands (interactive - repository commands only)
+./scripts/uninstall-commands.sh
 
-# Uninstall specific command
-./uninstall-commands.sh error-analysis
+# Uninstall specific command (repository commands only)
+./scripts/uninstall-commands.sh error-analysis
 ```
 
 ### Creating New Commands
 1. Study existing commands in `commands/` directory
 2. Use the template structure from `templates/command.md`
 3. Define appropriate MCP tools in frontmatter
-4. Test locally then run `./install-commands.sh`
+4. Test locally then run `./scripts/install-commands.sh`
 
 ### Testing Commands
 Commands are tested by:
@@ -120,10 +121,10 @@ This is a **command definition repository**, not an executable application. The 
 - Comprehensive error handling
 
 ### Uninstallation Script Features
-- Repository commands vs other commands distinction
-- Individual selection with multi-choice
+- **Safety-first**: Only removes repository commands (protects other custom commands)
+- Interactive menu showing available repository commands
 - Automatic backup before removal
-- Restoration instructions provided
+- Clear identification of which commands belong to this repository
 
 ## Usage Notes
 

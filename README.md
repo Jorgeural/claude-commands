@@ -138,12 +138,12 @@ The repository also includes a comprehensive uninstall script:
 
 **Uninstall Features:**
 
+- ✅ **Safety-first**: Only removes commands from this repository (protects other custom commands)
 - ✅ Remove all repository commands or individual selection
-- ✅ Remove other (non-repository) commands if desired
-- ✅ Remove all Claude commands with confirmation
-- ✅ Individual command selection with multiple choices
 - ✅ Automatic backup before removal
 - ✅ Clear summary of what was removed
+- ✅ Interactive menu with command descriptions
+- ✅ Confirmation prompts for all operations
 
 The installer will:
 
@@ -165,15 +165,15 @@ The installer will:
 
 | Command                                  | Description                                                                                      |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `./scripts/uninstall-commands.sh`                | Interactive mode - choose to remove repository commands, other commands, or individual selection |
-| `./scripts/uninstall-commands.sh [command-name]` | Direct removal of a specific command (e.g., `sprint-setup`)                                      |
+| `./scripts/uninstall-commands.sh`                | Interactive mode - shows menu of repository commands available for removal |
+| `./scripts/uninstall-commands.sh [command-name]` | Direct removal of a specific repository command (e.g., `sprint-setup`)                                      |
 
-**Uninstall Menu Categories:**
+**Uninstall Safety Features:**
 
-- **Repository Commands**: Remove commands that came from this claude-commands repository
-- **Other Commands**: Remove commands from other sources (if any exist)
-- **All Commands**: Remove everything from `~/.claude/commands`
-- **Individual Selection**: Choose specific commands to remove with multi-select
+- **Repository Commands Only**: Only removes commands that originated from this claude-commands repository
+- **Command Protection**: Other custom commands you may have installed remain untouched
+- **Clear Identification**: Shows which commands are from this repo with descriptions
+- **Backup Protection**: Automatic backup created before any removal operation
 
 **Interactive Menu Example:**
 
@@ -326,7 +326,7 @@ We welcome contributions! Here's how you can help:
 # Remove specific command
 ./scripts/uninstall-commands.sh error-analysis
 
-# Remove all repository commands but keep others
+# Remove all repository commands (other commands remain safe)
 ./scripts/uninstall-commands.sh  # Then select "Remove ALL repository commands"
 ```
 
@@ -383,7 +383,7 @@ A: Yes! Commands gracefully fallback to working with local files and user-provid
 A: Simply run `./scripts/install-commands.sh` again. It will detect updates and offer to replace existing commands.
 
 **Q: How do I remove commands I no longer need?**
-A: Use the uninstall script: `./scripts/uninstall-commands.sh`. You can remove individual commands, all repository commands, or everything.
+A: Use the uninstall script: `./scripts/uninstall-commands.sh`. It safely removes only commands from this repository, protecting any other custom commands you have.
 
 **Q: Can I modify commands for my team's specific needs?**
 A: Absolutely! Edit the command files and re-run the installer.

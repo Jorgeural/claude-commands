@@ -6,29 +6,7 @@ Hey Claude, this is a repository for storing custom Claude slash commands, along
 
 **Claude slash commands are .md files that define reusable prompts/workflows** - NOT execution results. Each command file contains instructions for Claude on how to help with a specific task.
 
-Example command structure:
-```markdown
----
-description: Brief description of what the command does
-allowed-tools: ToolName1, ToolName2, Bash, Read, Write
----
-
-# Command Name
-
-You are helping a software engineer with [specific task]. Your task is to:
-
-## 1. Step One
-- Detailed instructions for what Claude should do
-- What tools to use and how
-
-## Parameters
-Command arguments: $ARGUMENTS
-
-## Output Format
-Describe expected output format
-
-Focus on [key principles].
-```
+Use the template structure from `templates/command.md` when creating new commands.
 
 ## Step 1: Create Ideas.md
 

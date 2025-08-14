@@ -29,7 +29,10 @@ claude-commands/
 │   ├── build-optimize.md     # Build process optimization
 │   ├── velocity-report.md    # Team productivity metrics
 │   └── ci-health.md          # CI/CD pipeline monitoring
-└── sessions/                 # Session templates and examples
+├── templates/                # Command and session templates
+│   ├── command.md            # Template for creating new commands
+│   └── session.md            # Session template
+└── sessions/                 # Session examples
 ```
 
 ## Command Development
@@ -75,7 +78,7 @@ Commands leverage these MCP tools:
 
 ### Creating New Commands
 1. Study existing commands in `commands/` directory
-2. Use the template structure from `Instructions.md:10-31`
+2. Use the template structure from `templates/command.md`
 3. Define appropriate MCP tools in frontmatter
 4. Test locally then run `./install-commands.sh`
 

@@ -221,16 +221,20 @@ claude-commands/
 ├── Instructions.md          # Original development instructions
 ├── install-commands.sh      # Installation script
 ├── uninstall-commands.sh    # Uninstallation script
-└── commands/               # Command definitions
-    ├── sprint-setup.md     # Development workflow
-    ├── error-analysis.md   # Debugging & monitoring
-    ├── epic-breakdown.md   # Project management
-    ├── knowledge-share.md  # Team collaboration
-    ├── design-review.md    # Architecture & design
-    ├── security-audit.md   # Code quality
-    ├── build-optimize.md   # Build & deployment
-    ├── velocity-report.md  # Analytics & reporting
-    └── ci-health.md        # Integration & automation
+├── commands/                # Command definitions
+│   ├── sprint-setup.md      # Development workflow
+│   ├── error-analysis.md    # Debugging & monitoring
+│   ├── epic-breakdown.md    # Project management
+│   ├── knowledge-share.md   # Team collaboration
+│   ├── design-review.md     # Architecture & design
+│   ├── security-audit.md    # Code quality
+│   ├── build-optimize.md    # Build & deployment
+│   ├── velocity-report.md   # Analytics & reporting
+│   └── ci-health.md         # Integration & automation
+├── templates/               # Command and session templates
+│   ├── command.md           # Template for creating new commands
+│   └── session.md           # Session template
+└── sessions/                # Session examples
 ```
 
 ## 🔧 Customization
@@ -238,35 +242,7 @@ claude-commands/
 ### Creating New Commands
 
 1. Create a new `.md` file in the `commands/` directory
-2. Use this template:
-
-```markdown
----
-description: Brief description of what the command does
-allowed-tools: ToolName1, ToolName2, Bash, Read, Write
----
-
-# Command Name
-
-You are helping a software engineer with [specific task]. Your task is to:
-
-## 1. Step One
-- Detailed instructions for the first step
-- What tools to use and how
-
-## 2. Step Two  
-- Instructions for the second step
-- Expected outcomes
-
-## Parameters
-Description of command arguments: $ARGUMENTS
-
-## Output Format
-Describe the expected output format and structure.
-
-Focus on [key principles for this command].
-```
-
+2. Use the template structure from `templates/command.md`
 3. Test the command locally
 4. Run `./install-commands.sh` to deploy
 

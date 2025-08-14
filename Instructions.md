@@ -34,7 +34,7 @@ After Ideas.md is reviewed, create actual Claude slash command template files (.
 
 ## Step 3: Installation Script
 
-Create `install-commands.sh` script with these features:
+Create `scripts/install-commands.sh` script with these features:
 
 - **Target Directory**: ~/.claude/commands
 - **Safety Features**: 

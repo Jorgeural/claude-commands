@@ -101,20 +101,20 @@ These commands are designed to work with the following MCP integrations:
    **Interactive Mode** (choose all or single command):
 
    ```bash
-   ./install-commands.sh
+   ./scripts/install-commands.sh
    ```
 
    **Install All Commands:**
 
    ```bash
-   ./install-commands.sh
+   ./scripts/install-commands.sh
    # Then select option "0" for all commands
    ```
 
    **Install Single Command:**
 
    ```bash
-   ./install-commands.sh sprint-setup
+   ./scripts/install-commands.sh sprint-setup
    # Or use interactive mode and select specific command
    ```
 
@@ -127,13 +127,13 @@ The repository also includes a comprehensive uninstall script:
 **Interactive Mode** (choose what to remove):
 
 ```bash
-./uninstall-commands.sh
+./scripts/uninstall-commands.sh
 ```
 
 **Remove Single Command:**
 
 ```bash
-./uninstall-commands.sh sprint-setup
+./scripts/uninstall-commands.sh sprint-setup
 ```
 
 **Uninstall Features:**
@@ -158,15 +158,15 @@ The installer will:
 
 | Command                                | Description                                                                 |
 | -------------------------------------- | --------------------------------------------------------------------------- |
-| `./install-commands.sh`                | Interactive mode - shows menu to select all commands or individual commands |
-| `./install-commands.sh [command-name]` | Direct installation of a specific command (e.g., `sprint-setup`)            |
+| `./scripts/install-commands.sh`                | Interactive mode - shows menu to select all commands or individual commands |
+| `./scripts/install-commands.sh [command-name]` | Direct installation of a specific command (e.g., `sprint-setup`)            |
 
 ### Uninstallation Options
 
 | Command                                  | Description                                                                                      |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `./uninstall-commands.sh`                | Interactive mode - choose to remove repository commands, other commands, or individual selection |
-| `./uninstall-commands.sh [command-name]` | Direct removal of a specific command (e.g., `sprint-setup`)                                      |
+| `./scripts/uninstall-commands.sh`                | Interactive mode - choose to remove repository commands, other commands, or individual selection |
+| `./scripts/uninstall-commands.sh [command-name]` | Direct removal of a specific command (e.g., `sprint-setup`)                                      |
 
 **Uninstall Menu Categories:**
 
@@ -246,8 +246,9 @@ claude-commands/
 ├── README.md                 # This file
 ├── Ideas.md                 # Complete list of all command ideas
 ├── Instructions.md          # Original development instructions
-├── install-commands.sh      # Installation script
-├── uninstall-commands.sh    # Uninstallation script
+├── scripts/                 # Installation and management scripts
+│   ├── install-commands.sh   # Installation script
+│   └── uninstall-commands.sh # Uninstallation script
 ├── commands/                # Command definitions (10 commands)
 │   ├── sprint-setup.md      # Development workflow
 │   ├── error-analysis.md    # Debugging & monitoring
@@ -272,7 +273,7 @@ claude-commands/
 1. Create a new `.md` file in the `commands/` directory
 2. Use the template structure from `templates/command.md`
 3. Test the command locally
-4. Run `./install-commands.sh` to deploy
+4. Run `./scripts/install-commands.sh` to deploy
 
 ### Modifying Existing Commands
 
@@ -307,26 +308,26 @@ We welcome contributions! Here's how you can help:
 
 ```bash
 # Install everything interactively
-./install-commands.sh
+./scripts/install-commands.sh
 
 # Install just the sprint-setup command
-./install-commands.sh sprint-setup
+./scripts/install-commands.sh sprint-setup
 
 # Install multiple specific commands (interactive selection)
-./install-commands.sh  # Then choose individual selection
+./scripts/install-commands.sh  # Then choose individual selection
 ```
 
 **Removing Commands:**
 
 ```bash
 # Interactive uninstall menu
-./uninstall-commands.sh
+./scripts/uninstall-commands.sh
 
 # Remove specific command
-./uninstall-commands.sh error-analysis
+./scripts/uninstall-commands.sh error-analysis
 
 # Remove all repository commands but keep others
-./uninstall-commands.sh  # Then select "Remove ALL repository commands"
+./scripts/uninstall-commands.sh  # Then select "Remove ALL repository commands"
 ```
 
 ### Command Usage Examples
@@ -379,10 +380,10 @@ A: You'll need appropriate MCP tool access (Jira, GitHub, etc.) configured in Cl
 A: Yes! Commands gracefully fallback to working with local files and user-provided data.
 
 **Q: How do I update commands when new versions are released?**
-A: Simply run `./install-commands.sh` again. It will detect updates and offer to replace existing commands.
+A: Simply run `./scripts/install-commands.sh` again. It will detect updates and offer to replace existing commands.
 
 **Q: How do I remove commands I no longer need?**
-A: Use the uninstall script: `./uninstall-commands.sh`. You can remove individual commands, all repository commands, or everything.
+A: Use the uninstall script: `./scripts/uninstall-commands.sh`. You can remove individual commands, all repository commands, or everything.
 
 **Q: Can I modify commands for my team's specific needs?**
 A: Absolutely! Edit the command files and re-run the installer.

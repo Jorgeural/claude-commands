@@ -2,6 +2,8 @@
 
 A comprehensive collection of custom Claude slash commands designed specifically for software engineers. These commands leverage MCP (Model Context Protocol) integrations with popular development tools to streamline common engineering workflows.
 
+> **📖 Project Background**: This repository emerged from our team's proof-of-concept exploration into custom Claude Code slash commands. The initiative began with a simple need: consistent session documentation for AI-assisted development workflows. What started as a single `/document-session` command evolved into a comprehensive collection of workflow automation tools. Read the complete story and insights in our [POC documentation](POC-slash-commands.md).
+
 ## 🚀 What are Claude Slash Commands?
 
 Claude slash commands are reusable prompts that can be invoked with a simple `/command-name` syntax in Claude Code. They enable you to:

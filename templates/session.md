@@ -1,5 +1,8 @@
 # Claude Session Brief Template
 
+**File Naming Convention**: `{YYYYMMDD}-{title}-session.md`
+**Example**: `20250814-api-redesign-session.md`
+
 ## 📋 Session Overview
 
 **Project/Objective**: [Brief description of what you're trying to achieve]  

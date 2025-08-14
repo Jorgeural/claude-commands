@@ -15,44 +15,57 @@ For more information about Claude slash commands, visit the [official documentat
 
 ## 📦 Available Commands
 
-This repository includes **9 production-ready commands** covering major software engineering workflows:
+This repository includes **10 production-ready commands** covering major software engineering workflows:
 
 ### 🔧 Development Workflow
-- **`/sprint-setup`** - Set up sprints with Jira integration, branch creation, and team notifications
-- **`/pr-ready`** - Comprehensive pre-PR checklist and preparation *(coming soon)*
-- **`/deploy-check`** - Validate deployment readiness *(coming soon)*
 
-### 🐛 Debugging & Monitoring  
+- **`/sprint-setup`** - Set up sprints with Jira integration, branch creation, and team notifications
+- **`/pr-ready`** - Comprehensive pre-PR checklist and preparation _(coming soon)_
+- **`/deploy-check`** - Validate deployment readiness _(coming soon)_
+
+### 🐛 Debugging & Monitoring
+
 - **`/error-analysis`** - Analyze error patterns from Sentry and suggest fixes
-- **`/debug-session`** - Set up debugging environment with context *(coming soon)*
+- **`/debug-session`** - Set up debugging environment with context _(coming soon)_
 
 ### 📋 Project Management
+
 - **`/epic-breakdown`** - Break down large epics into manageable tasks with estimation
-- **`/ticket-estimate`** - AI-powered story point estimation *(coming soon)*
+- **`/ticket-estimate`** - AI-powered story point estimation _(coming soon)_
 
 ### 🤝 Team Collaboration
+
 - **`/knowledge-share`** - Extract and share technical knowledge across platforms
-- **`/code-handoff`** - Create comprehensive knowledge transfer documentation *(coming soon)*
+- **`/code-handoff`** - Create comprehensive knowledge transfer documentation _(coming soon)_
 
 ### 🏗️ Architecture & Design
+
 - **`/design-review`** - Create implementation plans from Figma designs
-- **`/api-design`** - Design and document APIs comprehensively *(coming soon)*
+- **`/api-design`** - Design and document APIs comprehensively _(coming soon)_
 
 ### 🔍 Code Quality
+
 - **`/security-audit`** - Comprehensive security analysis of codebase and dependencies
-- **`/refactor-plan`** - Analyze code and create refactoring roadmap *(coming soon)*
+- **`/refactor-plan`** - Analyze code and create refactoring roadmap _(coming soon)_
 
 ### 📦 Build & Deployment
+
 - **`/build-optimize`** - Analyze and optimize build process performance
-- **`/env-sync`** - Synchronize environment configurations *(coming soon)*
+- **`/env-sync`** - Synchronize environment configurations _(coming soon)_
 
 ### 📊 Analytics & Reporting
+
 - **`/velocity-report`** - Generate team velocity and productivity metrics
-- **`/commit-analysis`** - Analyze commit patterns and code ownership *(coming soon)*
+- **`/commit-analysis`** - Analyze commit patterns and code ownership _(coming soon)_
 
 ### 🔄 Integration & Automation
+
 - **`/ci-health`** - Monitor and optimize CI/CD pipeline health
-- **`/workspace-setup`** - Set up complete development workspace *(coming soon)*
+- **`/workspace-setup`** - Set up complete development workspace _(coming soon)_
+
+### 📝 Documentation & Session Management
+
+- **`/document-session`** - Generate structured session documentation with TL;DR summaries
 
 ## 💡 All Command Ideas
 
@@ -77,25 +90,29 @@ These commands are designed to work with the following MCP integrations:
 ### Installation
 
 1. **Clone this repository:**
+
    ```bash
    git clone <repository-url>
    cd claude-commands
    ```
 
 2. **Run the installation script:**
-   
+
    **Interactive Mode** (choose all or single command):
+
    ```bash
    ./install-commands.sh
    ```
-   
+
    **Install All Commands:**
+
    ```bash
    ./install-commands.sh
    # Then select option "0" for all commands
    ```
-   
+
    **Install Single Command:**
+
    ```bash
    ./install-commands.sh sprint-setup
    # Or use interactive mode and select specific command
@@ -108,24 +125,28 @@ These commands are designed to work with the following MCP integrations:
 The repository also includes a comprehensive uninstall script:
 
 **Interactive Mode** (choose what to remove):
+
 ```bash
 ./uninstall-commands.sh
 ```
 
 **Remove Single Command:**
+
 ```bash
 ./uninstall-commands.sh sprint-setup
 ```
 
 **Uninstall Features:**
+
 - ✅ Remove all repository commands or individual selection
-- ✅ Remove other (non-repository) commands if desired  
+- ✅ Remove other (non-repository) commands if desired
 - ✅ Remove all Claude commands with confirmation
 - ✅ Individual command selection with multiple choices
 - ✅ Automatic backup before removal
 - ✅ Clear summary of what was removed
 
 The installer will:
+
 - ✅ Create the `~/.claude/commands` directory if it doesn't exist
 - ✅ Show interactive menu with all available commands and descriptions
 - ✅ Allow installation of all commands or individual command selection
@@ -135,29 +156,31 @@ The installer will:
 
 ### Installation Options
 
-| Command | Description |
-|---------|-------------|
-| `./install-commands.sh` | Interactive mode - shows menu to select all commands or individual commands |
-| `./install-commands.sh [command-name]` | Direct installation of a specific command (e.g., `sprint-setup`) |
+| Command                                | Description                                                                 |
+| -------------------------------------- | --------------------------------------------------------------------------- |
+| `./install-commands.sh`                | Interactive mode - shows menu to select all commands or individual commands |
+| `./install-commands.sh [command-name]` | Direct installation of a specific command (e.g., `sprint-setup`)            |
 
 ### Uninstallation Options
 
-| Command | Description |
-|---------|-------------|
-| `./uninstall-commands.sh` | Interactive mode - choose to remove repository commands, other commands, or individual selection |
-| `./uninstall-commands.sh [command-name]` | Direct removal of a specific command (e.g., `sprint-setup`) |
+| Command                                  | Description                                                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `./uninstall-commands.sh`                | Interactive mode - choose to remove repository commands, other commands, or individual selection |
+| `./uninstall-commands.sh [command-name]` | Direct removal of a specific command (e.g., `sprint-setup`)                                      |
 
 **Uninstall Menu Categories:**
+
 - **Repository Commands**: Remove commands that came from this claude-commands repository
 - **Other Commands**: Remove commands from other sources (if any exist)
 - **All Commands**: Remove everything from `~/.claude/commands`
 - **Individual Selection**: Choose specific commands to remove with multi-select
 
 **Interactive Menu Example:**
+
 ```
 Available commands:
 
-0) Install ALL commands (9 total)
+0) Install ALL commands (10 total)
 1) /sprint-setup - Set up a new sprint with Jira integration, branch creation, and team notifications
 2) /error-analysis - Analyze error patterns from Sentry and suggest fixes based on stack traces and trends
 3) /epic-breakdown - Break down large Jira epics into manageable tasks with effort estimation and technical specifications
@@ -167,8 +190,9 @@ Available commands:
 7) /build-optimize - Analyze and optimize build process performance, identifying bottlenecks and implementing improvements
 8) /velocity-report - Generate comprehensive team velocity and productivity metrics from Jira and GitHub data
 9) /ci-health - Monitor and optimize CI/CD pipeline health, identifying failures and performance issues
+10) /document-session - Generate structured session documentation with TL;DR summaries
 
-Select option (0-9):
+Select option (0-10):
 ```
 
 ### Usage
@@ -179,7 +203,7 @@ Once installed, use the commands in Claude Code with the `/` prefix:
 # Set up a new sprint
 /sprint-setup SPRINT-2024-Q1
 
-# Analyze recent errors  
+# Analyze recent errors
 /error-analysis 7d --severity=high
 
 # Break down an epic
@@ -202,6 +226,9 @@ Once installed, use the commands in Claude Code with the `/` prefix:
 
 # Check CI/CD health
 /ci-health --timeframe=30d --fix-issues
+
+# Document current session
+/document-session debugging-session --path=./sessions
 ```
 
 ### Configuration
@@ -221,7 +248,7 @@ claude-commands/
 ├── Instructions.md          # Original development instructions
 ├── install-commands.sh      # Installation script
 ├── uninstall-commands.sh    # Uninstallation script
-├── commands/                # Command definitions
+├── commands/                # Command definitions (10 commands)
 │   ├── sprint-setup.md      # Development workflow
 │   ├── error-analysis.md    # Debugging & monitoring
 │   ├── epic-breakdown.md    # Project management
@@ -230,7 +257,8 @@ claude-commands/
 │   ├── security-audit.md    # Code quality
 │   ├── build-optimize.md    # Build & deployment
 │   ├── velocity-report.md   # Analytics & reporting
-│   └── ci-health.md         # Integration & automation
+│   ├── ci-health.md         # Integration & automation
+│   └── document-session.md  # Documentation & session management
 ├── templates/               # Command and session templates
 │   ├── command.md           # Template for creating new commands
 │   └── session.md           # Session template
@@ -276,6 +304,7 @@ We welcome contributions! Here's how you can help:
 ### Command Management Examples
 
 **Installing Commands:**
+
 ```bash
 # Install everything interactively
 ./install-commands.sh
@@ -288,6 +317,7 @@ We welcome contributions! Here's how you can help:
 ```
 
 **Removing Commands:**
+
 ```bash
 # Interactive uninstall menu
 ./uninstall-commands.sh
@@ -302,30 +332,39 @@ We welcome contributions! Here's how you can help:
 ### Command Usage Examples
 
 #### Sprint Setup Example
+
 ```bash
 /sprint-setup PROJ-SPRINT-15
 ```
+
 **Output:**
+
 - Fetches all assigned Jira tickets
-- Creates feature branches for each ticket  
+- Creates feature branches for each ticket
 - Generates sprint documentation
 - Provides next steps and priorities
 
 #### Error Analysis Example
+
 ```bash
 /error-analysis 7d --severity=high
 ```
+
 **Output:**
+
 - Analysis of error patterns from the last 7 days
 - Root cause identification for high-severity issues
 - Specific fix recommendations with code examples
 - Prioritized action plan
 
 #### Security Audit Example
+
 ```bash
 /security-audit --scope=dependencies --severity=critical
 ```
+
 **Output:**
+
 - Comprehensive dependency vulnerability scan
 - Critical security issues with CVSS scores
 - Specific remediation steps
@@ -375,4 +414,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Built with ❤️ for the software engineering community**
 
-*Streamline your development workflow with the power of Claude and MCP integrations.*
+_Streamline your development workflow with the power of Claude and MCP integrations._

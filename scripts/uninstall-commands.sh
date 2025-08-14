@@ -94,58 +94,84 @@ list_all_claude_commands() {
     echo "${all_commands[@]}"
 }
 
-# Function to show command uninstallation menu
-show_uninstall_selection() {
+# Function to ask uninstallation mode (all vs single)
+ask_uninstallation_mode() {
     local repo_commands=($(list_installed_commands))
     local repo_count=${#repo_commands[@]}
     
     if [ $repo_count -eq 0 ]; then
-        print_warning "No commands from this repository are currently installed."
-        print_info "This script only removes commands that belong to the claude-commands repository."
+        print_warning "No commands from this repository are currently installed." >&2
+        print_info "This script only removes commands that belong to the claude-commands repository." >&2
         return 1
     fi
     
-    print_info "Repository Commands Available for Removal:"
-    echo
-    print_info "This script will only remove commands from the claude-commands repository."
-    print_info "Other commands you may have installed will remain untouched."
-    echo
-    
-    echo "0) Remove ALL repository commands ($repo_count total)"
-    
-    for i in "${!repo_commands[@]}"; do
-        local num=$((i + 1))
-        local cmd_name="${repo_commands[$i]}"
-        
-        # Try to extract description from the repository command file
-        local description=""
-        local cmd_file="$REPO_COMMANDS_DIR/${cmd_name}.md"
-        if [ -f "$cmd_file" ]; then
-            description=$(grep "^description:" "$cmd_file" 2>/dev/null | sed 's/description: *//' | head -1)
-        fi
-        
-        if [ -n "$description" ]; then
-            echo "$num) /$cmd_name - $description"
-        else
-            echo "$num) /$cmd_name"
-        fi
-    done
-    echo
+    print_info "This script will only remove commands from the claude-commands repository." >&2
+    print_info "Other commands you may have installed will remain untouched." >&2
+    echo >&2
     
     while true; do
-        read -p "Select option (0-$repo_count): " selection
+        print_info "Uninstallation Mode:" >&2
+        echo >&2
+        echo "1) Remove ALL repository commands ($repo_count total)" >&2
+        echo "2) Remove a single command" >&2
+        echo >&2
         
-        if [[ "$selection" =~ ^[0-9]+$ ]] && [ "$selection" -ge 0 ] && [ "$selection" -le "$repo_count" ]; then
-            if [ "$selection" -eq 0 ]; then
-                echo "repo-all"
+        read -p "Select option (1-2): " selection >&2
+        
+        case "$selection" in
+            1)
+                echo "all"
                 return 0
-            else
-                local selected_index=$((selection - 1))
-                echo "${repo_commands[$selected_index]}"
+                ;;
+            2)
+                echo "single"
                 return 0
+                ;;
+            *)
+                print_warning "Invalid selection. Please choose 1 or 2." >&2
+                echo >&2
+                ;;
+        esac
+    done
+}
+
+# Function to show command selection menu (for single command removal)
+show_command_selection() {
+    local repo_commands=($(list_installed_commands))
+    local repo_count=${#repo_commands[@]}
+    
+    while true; do
+        print_info "Repository Commands Available for Removal:" >&2
+        echo >&2
+        
+        for i in "${!repo_commands[@]}"; do
+            local num=$((i + 1))
+            local cmd_name="${repo_commands[$i]}"
+            
+            # Try to extract description from the repository command file
+            local description=""
+            local cmd_file="$REPO_COMMANDS_DIR/${cmd_name}.md"
+            if [ -f "$cmd_file" ]; then
+                description=$(grep "^description:" "$cmd_file" 2>/dev/null | sed 's/description: *//' | head -1)
             fi
+            
+            if [ -n "$description" ]; then
+                echo "$num) /$cmd_name - $description" >&2
+            else
+                echo "$num) /$cmd_name" >&2
+            fi
+        done
+        echo >&2
+        
+        read -p "Select command (1-$repo_count): " selection >&2
+        
+        if [[ "$selection" =~ ^[0-9]+$ ]] && [ "$selection" -ge 1 ] && [ "$selection" -le "$repo_count" ]; then
+            local selected_index=$((selection - 1))
+            echo "${repo_commands[$selected_index]}"
+            return 0
         else
-            print_warning "Invalid selection. Please choose a number between 0 and $repo_count."
+            print_warning "Invalid selection. Please choose a number between 1 and $repo_count." >&2
+            echo >&2
         fi
     done
 }
@@ -294,26 +320,21 @@ main() {
             exit 1
         fi
     else
-        # Interactive selection
-        print_info "Uninstallation Mode Selection"
-        echo
-        
-        local selection=$(show_uninstall_selection)
+        # Interactive selection - first ask mode, then command if needed
+        local mode=$(ask_uninstallation_mode)
         if [ $? -ne 0 ]; then
             exit 1
         fi
         
-        case "$selection" in
-            "repo-all")
-                uninstall_mode="repo-all"
-                commands_to_remove=($(list_installed_commands))
-                ;;
-            *)
-                # Single command selected
-                uninstall_mode="single"
-                commands_to_remove=("$selection")
-                ;;
-        esac
+        if [ "$mode" = "all" ]; then
+            uninstall_mode="repo-all"
+            commands_to_remove=($(list_installed_commands))
+        else
+            uninstall_mode="single"
+            echo
+            local selected_command=$(show_command_selection)
+            commands_to_remove=("$selected_command")
+        fi
     fi
     
     echo
@@ -336,7 +357,7 @@ main() {
         confirmation_msg="Are you sure you want to remove /${commands_to_remove[0]}?"
     fi
     
-    if ! ask_confirmation "$confirmation_msg"; then
+    if ! ask_confirmation "$confirmation_msg" "y"; then
         print_info "Uninstallation cancelled by user"
         exit 0
     fi

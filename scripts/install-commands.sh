@@ -64,48 +64,74 @@ list_available_commands() {
     echo "${commands[@]}"
 }
 
-# Function to show command selection menu
+# Function to ask installation mode (all vs single)
+ask_installation_mode() {
+    local commands=($(list_available_commands))
+    local count=${#commands[@]}
+    
+    while true; do
+        print_info "Installation Mode:" >&2
+        echo >&2
+        echo "1) Install ALL commands ($count total)" >&2
+        echo "2) Install a single command" >&2
+        echo >&2
+        
+        read -p "Select option (1-2): " selection >&2
+        
+        case "$selection" in
+            1)
+                echo "all"
+                return 0
+                ;;
+            2)
+                echo "single"
+                return 0
+                ;;
+            *)
+                print_warning "Invalid selection. Please choose 1 or 2." >&2
+                echo >&2
+                ;;
+        esac
+    done
+}
+
+# Function to show command selection menu (for single command installation)
 show_command_selection() {
     local commands=($(list_available_commands))
     local count=${#commands[@]}
     
-    print_info "Available commands:"
-    echo
-    echo "0) Install ALL commands ($count total)"
-    
-    for i in "${!commands[@]}"; do
-        local num=$((i + 1))
-        local cmd_name="${commands[$i]}"
-        
-        # Try to extract description from the command file
-        local description=""
-        local cmd_file="$REPO_COMMANDS_DIR/${cmd_name}.md"
-        if [ -f "$cmd_file" ]; then
-            description=$(grep "^description:" "$cmd_file" 2>/dev/null | sed 's/description: *//' | head -1)
-        fi
-        
-        if [ -n "$description" ]; then
-            echo "$num) /$cmd_name - $description"
-        else
-            echo "$num) /$cmd_name"
-        fi
-    done
-    echo
-    
     while true; do
-        read -p "Select option (0-$count): " selection
+        print_info "Available commands:" >&2
+        echo >&2
         
-        if [[ "$selection" =~ ^[0-9]+$ ]] && [ "$selection" -ge 0 ] && [ "$selection" -le "$count" ]; then
-            if [ "$selection" -eq 0 ]; then
-                echo "all"
-                return 0
-            else
-                local selected_index=$((selection - 1))
-                echo "${commands[$selected_index]}"
-                return 0
+        for i in "${!commands[@]}"; do
+            local num=$((i + 1))
+            local cmd_name="${commands[$i]}"
+            
+            # Try to extract description from the command file
+            local description=""
+            local cmd_file="$REPO_COMMANDS_DIR/${cmd_name}.md"
+            if [ -f "$cmd_file" ]; then
+                description=$(grep "^description:" "$cmd_file" 2>/dev/null | sed 's/description: *//' | head -1)
             fi
+            
+            if [ -n "$description" ]; then
+                echo "$num) /$cmd_name - $description" >&2
+            else
+                echo "$num) /$cmd_name" >&2
+            fi
+        done
+        echo >&2
+        
+        read -p "Select command (1-$count): " selection >&2
+        
+        if [[ "$selection" =~ ^[0-9]+$ ]] && [ "$selection" -ge 1 ] && [ "$selection" -le "$count" ]; then
+            local selected_index=$((selection - 1))
+            echo "${commands[$selected_index]}"
+            return 0
         else
-            print_warning "Invalid selection. Please choose a number between 0 and $count."
+            print_warning "Invalid selection. Please choose a number between 1 and $count." >&2
+            echo >&2
         fi
     done
 }
@@ -255,15 +281,16 @@ main() {
             exit 1
         fi
     else
-        # Interactive selection
-        print_info "Installation Mode Selection"
-        echo
-        selected_command=$(show_command_selection)
+        # Interactive selection - first ask mode, then command if needed
+        local mode=$(ask_installation_mode)
         
-        if [ "$selected_command" = "all" ]; then
+        if [ "$mode" = "all" ]; then
             install_mode="all"
+            selected_command=""
         else
             install_mode="single"
+            echo
+            selected_command=$(show_command_selection)
         fi
     fi
     
@@ -293,7 +320,7 @@ main() {
     echo
     
     # Ask for confirmation to proceed
-    if ! ask_confirmation "Proceed with installation?"; then
+    if ! ask_confirmation "Proceed with installation?" "y"; then
         print_info "Installation cancelled by user"
         exit 0
     fi
